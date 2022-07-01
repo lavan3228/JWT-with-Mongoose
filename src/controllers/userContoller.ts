@@ -38,7 +38,7 @@ class userApiCalls {
                 } else if (_id.length === 10) {
                     getUser = await User.findOne({mobileNumber:_id})
                 } else if (_id.length === 24 ) {
-                    getUser = await User.findOne({_id:_id})
+                    getUser = await User.findOne({_id:_id}) 
                 } else {
                     getUser = await User.findOne({username:_id})
                 }
