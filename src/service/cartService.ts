@@ -1,32 +1,32 @@
-import { categoryModel } from "../models/category";
+import { cartModel } from "../models/cart";
 import { Index } from "./index";
 
 
-class CategoryService extends Index {
+class CartService extends Index {
 
     find = async (condition) => {
-        return await this.findOne(categoryModel, condition);
+        return await this.findOne(cartModel, condition);
     }
 
     save = async (record: any) => {
-        return await this.create(categoryModel, record);
+        return await this.create(cartModel, record);
     }
 
     update = async (whereCondition: any, updateData: any) => {
-        return await this.updateOne(categoryModel, whereCondition, updateData);
+        return await this.updateOne(cartModel, whereCondition, updateData);
     }
 
 
 
     //  To get payment details
     findPayment = async (condition: any) => {
-        const result: any = await this.findOne(categoryModel, condition);
+        const result: any = await this.findOne(cartModel, condition);
         return result;
     }
 
     // To update task details
     findAndUpdateTask = async (condition: any, data: any) => {
-        const result: any = await this.findOneAndUpdate(categoryModel, condition, data);
+        const result: any = await this.findOneAndUpdate(cartModel, condition, data);
         return result;
     }
 
@@ -39,15 +39,15 @@ class CategoryService extends Index {
             status_name: statusName,                        // Ex: Booked
             // created_at: moment().format()
         };
-        const result: any = await this.create(categoryModel, statusData);
+        const result: any = await this.create(cartModel, statusData);
         return result;
     }
 
     // Update patient detail if already exist otherwise save the patient details
     patientFindOneAndUpdateUpsert = async (condition: any, data: any) => {
-        const result: any = await this.findOneAndUpdateUpsert(categoryModel, condition, data);
+        const result: any = await this.findOneAndUpdateUpsert(cartModel, condition, data);
         return result;
     }
 }
 
-export const categoryService = new CategoryService();
+export const cartService = new CartService();

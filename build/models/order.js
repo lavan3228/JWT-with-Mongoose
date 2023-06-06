@@ -23,43 +23,53 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.orderModel = void 0;
+exports.orderModel = exports.productCart = void 0;
 const mongoose = __importStar(require("mongoose"));
 const productCartSchema = new mongoose.Schema({
-    product: {
+    productId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
         required: true
     },
-    name: {
+    productName: {
         type: String,
     },
-    count: {
-        type: Number
+    productQuantity: {
+        type: Number,
+        required: true,
+        min: [1, 'Quantity can not be less then 1.']
     },
     price: {
         type: Number
     }
 });
+// 	productSize: String,
 const orderSchema = new mongoose.Schema({
     products: [productCartSchema],
     transaction_id: { type: String },
-    amount: {
-        type: Number
+    totalAmount: {
+        type: Number,
+        required: true
     },
     address: {
-        type: String
+        type: String,
+        required: true
     },
     updated: Date,
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
+    // paymentId: { type: String },
     status: {
         type: String,
         default: "Received",
         enum: ["Cancelled", "Delivered", "Shipped", "Processing", "Received"]
-    }
+    },
+    cart: {
+        type: Object,
+        required: true
+    },
 }, { timestamps: true });
-// export const productCart = mongoose.model("ProductCart", productCartSchema)
+exports.productCart = mongoose.model("ProductCart", productCartSchema);
 exports.orderModel = mongoose.model("Order", orderSchema);

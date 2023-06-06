@@ -20,12 +20,14 @@ const log = loggerFactory_1.loggerFactory.getLogger('orderController');
 // import validation from "../joiValidation";
 // import Author from "../models/category";
 // import { any } from "joi";
-const response_1 = require("../utils/response");
 // import { userModel } from '../models/user';
+const response_1 = require("../utils/response");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-// import bcrypt from 'bcrypt';
-// import { randomstring } from 'randomstring';
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const userService_1 = require("../service/userService");
+const generateToken_1 = __importDefault(require("../utils/generateToken"));
+const verifyRefreshToken_1 = __importDefault(require("../utils/verifyRefreshToken"));
+const userToken_1 = __importDefault(require("../models/userToken"));
 class AuthController {
     constructor() {
         /**
@@ -37,28 +39,39 @@ class AuthController {
         this.signup = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const payload = req.body.attributes;
-                // const saltKey = randomstring.generate(8);
+                console.log(payload.email, 'payload');
+                const condition = { email: payload.email };
+                const userexists = yield userService_1.userService.find(condition);
+                console.log(userexists, "jdhfh");
+                if (userexists) {
+                    return res.status(400).send({
+                        message: 'User with given email already exist',
+                    });
+                }
+                const salt = yield bcrypt_1.default.genSalt(Number(process.env.SALT));
                 // Encrypt password
-                // const hashedPassword = await bcrypt.hash(payload.password, saltKey).toString();
+                const hashedPassword = yield bcrypt_1.default.hash(payload.password, salt);
+                console.log(hashedPassword, "fff");
                 const saveUserData = {
-                    name: payload.name,
+                    firstname: payload.firstname,
                     lastname: payload.lastname,
                     email: payload.email,
-                    password: payload.password,
-                    // saltKey: saltKey
+                    password: hashedPassword,
+                    mobileNumber: payload.mobileNumber,
+                    saltKey: salt
                 };
-                saveUserData["age"] = 21;
+                // saveUserData["age"] = 21;
                 // saving user details here
-                const saveUserDatils = yield userService_1.userService.save(saveUserData);
-                log.info({ jsonObject: saveUserDatils, description: "Save User data" });
-                if (!saveUserDatils) {
+                const newUser = yield userService_1.userService.save(saveUserData);
+                log.info({ jsonObject: newUser, description: "Save User data" });
+                if (!newUser) {
                     return response_1.response.error(req, res, {}, "NOT able to save user in DB");
                 }
-                return response_1.response.send(req, res, {}, "Success");
+                return response_1.response.send(req, res, {}, "Account created sucessfully");
             }
             catch (err) {
                 console.log(err, "*******");
-                return response_1.response.error(req, res, {}, 'Something went wrong');
+                return response_1.response.error(req, res, {}, 'Internal Server Error');
             }
         });
         /**
@@ -71,41 +84,117 @@ class AuthController {
             log.info("sign in method start");
             try {
                 const payload = req.body.attributes;
+                console.log(payload, "sai payload");
                 const userCondition = {
-                    email: payload.email,
-                    password: payload.password
+                    email: payload.email
                 };
-                const getUserDetails = yield userService_1.userService.find(userCondition);
-                log.info({ jsonObject: getUserDetails, description: "get User data" });
-                if (!getUserDetails) {
-                    return response_1.response.error(req, res, {}, "NO DATA Found");
+                // const hashedPassword = await bcrypt.compare(payload.password, 10);
+                const user = yield userService_1.userService.find(userCondition);
+                log.info({ jsonObject: user, description: "get User data" });
+                if (!user) {
+                    console.log("sai jdjdj");
+                    return response_1.response.error(req, res, {}, "User does not exist");
                 }
-                //create token 
-                const token = jsonwebtoken_1.default.sign({ _id: getUserDetails._id }, process.env.SECRET);
-                // put token in cookie 
-                res.cookie('token', token, { expires: new Date(Date.now() + 9999) });
+                const checkAPassword = yield bcrypt_1.default.compare(payload.password, user.password);
+                console.log(checkAPassword, "chack");
+                if (!checkAPassword) {
+                    return response_1.response.error(req, res, {}, "Invalid credentials");
+                }
+                const { accessToken, refreshToken } = yield (0, generateToken_1.default)(user);
+                // //create token 
+                // const accessToken = jwt.sign({ _id: user._id }, process.env.ACCESS_TOKEN_SECRET);
+                // // put token in cookie 
+                // res.cookie('token', accessToken, { expires: new Date(Date.now() + 1000 * 600) })
+                // //create refreshToken token 
+                // const refreshToken = jwt.sign({ _id: user._id } + Date.now().toString(), process.env.REFRESH_TOKEN_SECRET);
+                // // put refreshToken in cookie 
+                // res.cookie('token', refreshToken, { expires: new Date(Date.now() + 999999) })
+                // res.cookie('jwt', newRefreshToken, {
+                //     httpOnly: true, 
+                //     secure: true,
+                //     sameSite: 'Strict',  // or 'Lax', it depends
+                //     maxAge: 604800000,  // 7 days
+                // });
                 // send response to front end 
-                const { _id, name, email, role } = getUserDetails;
-                return response_1.response.send(req, res, { token, user: { _id, name, email, role } }, "Success");
+                const { _id, name, email, role } = user;
+                return response_1.response.send(req, res, { accessToken, refreshToken, user: { _id, name, email, role } }, "Logged in sucessfully");
             }
             catch (err) {
                 console.log(err, "**********");
-                return response_1.response.error(req, res, {}, 'Something went wrong');
+                return response_1.response.error(req, res, {}, 'Internal Server Error');
             }
         });
+        this.isSignedin = (req, res, next) => {
+            // Check if user is signed in
+            if (req.session && req.session.userId) {
+                next();
+            }
+            else {
+                res.status(401).json({ error: 'Unauthorized. Please sign in.' });
+            }
+        };
         this.isAuthenticated = (req, res, next) => {
             let checker = (req.profile && req.auth && req.profile_id == req.auth._id);
             if (!checker) {
                 return response_1.response.error(req, res, {}, "Failed");
             }
             next();
+            // if (req.user) {
+            //     // User is authenticated, allow access to the route
+            //     next();
+            //   } else {
+            //     // User is not authenticated, respond with an error or redirect to login page
+            //     res.status(401).json({ error: 'Unauthorized. Please log in.' });
+            //   }
         };
         this.isAdmin = (req, res, next) => {
             if (req.profile.role === 0) {
-                return response_1.response.error(req, res, {}, "Failed");
+                return response_1.response.error(req, res, { code: 403 }, "Failed");
             }
             next();
+            // if (req.user && req.user.role === 'admin') {
+            //     // User is an admin, allow access to the route
+            //     next();
+            //   } else {
+            //     // User is not an admin, respond with an error or redirect
         };
+        // get new access token
+        this.verifyRefreshToken = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const payload = req.body;
+            console.log("verify refresh token start");
+            const tokenDetails = yield (0, verifyRefreshToken_1.default)(payload.refreshToken);
+            console.log(tokenDetails, "hdhdf");
+            if (tokenDetails.error === false) {
+                const payload = { _id: tokenDetails.payload._id, roles: tokenDetails.roles };
+                const accessToken = jsonwebtoken_1.default.sign(payload, process.env.REFRESH_TOKEN_PRIVATE_KEY, { expiresIn: "14m" });
+                return res.status(200).json({
+                    status: true,
+                    accessToken,
+                    message: "Access token created successfully",
+                });
+            }
+            return res.status(400).json(tokenDetails.message);
+        });
+        // logout
+        this.signout = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            log.info("sign out method start");
+            try {
+                const userToken = yield userToken_1.default.findOne({ token: req.body.refreshToken });
+                if (!userToken) {
+                    console.log("dndd");
+                    return res
+                        .status(200)
+                        .json({ status: true, message: "Logged Out Sucessfully" });
+                }
+                console.log("djjd");
+                yield userToken.remove();
+                res.status(200).json({ error: false, message: "Logged Out Sucessfully" });
+            }
+            catch (err) {
+                console.log(err);
+                res.status(500).json({ error: true, message: "Internal Server Error" });
+            }
+        });
     }
 }
 exports.authController = new AuthController();

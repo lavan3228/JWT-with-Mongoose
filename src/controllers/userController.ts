@@ -9,6 +9,13 @@ import { orderService } from '../service/orderService';
 import { response } from '../utils/response';
 
 
+// User Profile:
+
+// API Name: /api/users/:userId/profile
+// Method Names:
+// getUserProfile: GET endpoint to fetch the user's profile.
+// updateUserProfile: PUT endpoint to update the user's profile.
+
 const app: Application = express();
 app.use(express.json());
 
@@ -19,13 +26,13 @@ class UserController {
         try {
             console.log("jejwjeh")
             const allUsers: any = await orderService.find({});
-            
+
             if (!allUsers || allUsers.length <= 0) {
                 return response.error(req, res, {}, "USER DETAILS NOT FOUND");
             }
 
             // const count = await userService.countAll();
-            return response.send(req, res, {}, "USER DETAILS NOT FOUND");
+            return response.send(req, res, allUsers, "USER DETAILS FOUND");
         } catch (error: any) {
             return response.error(req, res, {}, "SOMETHING WENT WRONG")
         }
@@ -35,7 +42,7 @@ class UserController {
     getUser = async (req, res) => {
         try {
             const id = req.params.id;
-            const getUser = await userService.find({_id: id});
+            const getUser = await userService.find({ _id: id });
 
             if (!getUser) {
                 return response.error(req, res, {}, "User not found")
@@ -77,25 +84,25 @@ class UserController {
     }
 
     // 4. update author
-    // updateAuthor = async (req:Request, res:Response)=>{
-    //     try{
-    //         const _id = req.params.id;
-    //         const result = await validation.updateAuthorValidation.validateAsync(req.body);
-    //         const getAuthor = await Author.findByIdAndUpdate(_id, result, {
-    //             new: true
-    //         });
-    //         res.send({
-    //             status: 200,
-    //             message:"Success",
-    //             data: getAuthor 
-    //         })
-    //     }catch(error:any){
-    //         res.send({
-    //             status: 400,
-    //             message: error.message
-    //         })
-    //     }
-    // }
+    updateUser = async (req, res) => {
+        try {
+            const _id = req.params.id;
+            const result = await validation.updateAuthorValidation.validateAsync(req.body);
+            // const getAuthor = await userService.findAndUpdateTask(_id, result, {
+            //     new: true
+            // });
+            // res.send({
+            //     status: 200,
+            //     message:"Success",
+            //     data: getAuthor 
+            // })
+        } catch (error: any) {
+            res.send({
+                status: 400,
+                message: error.message
+            })
+        }
+    }
 
     // // 5. delete author by id
     // deleteAuthor = async (req:Request, res:Response) =>{

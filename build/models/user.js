@@ -22,18 +22,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userModel = void 0;
 const mongoose = __importStar(require("mongoose"));
-const crypto_1 = __importDefault(require("crypto"));
-// import uuid from 'uuid';
-// import { func } from 'joi';
+const { isEmail } = require('validator');
 const modelName = 'User';
 const userSchema = new mongoose.Schema({
-    name: {
+    firstname: {
         type: String,
         required: true,
         maxlength: 32,
@@ -47,6 +42,14 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         trim: true,
+        required: [true, 'Please enter an email'],
+        unique: true,
+        lowercase: true,
+        validate: [isEmail, 'Please enter a valid email']
+    },
+    mobileNumber: {
+        type: String,
+        trim: true,
         required: true,
         unique: true
     },
@@ -56,7 +59,8 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: [true, 'Please enter a valid password'],
+        minlength: [6, 'Minimum password length must be 6 characters']
     },
     salt: String,
     role: {
@@ -68,22 +72,25 @@ const userSchema = new mongoose.Schema({
         default: []
     },
 }, { timestamps: true });
-userSchema.method = {
-    authenticate: function (plainpassword) {
-        return this.securePassword(plainpassword) == this.encry_password;
-    },
-    securePassword: function (plainpassword) {
-        if (!plainpassword)
-            return "";
-        try {
-            return crypto_1.default
-                .createHmac('sha256', this.salt)
-                .update(plainpassword)
-                .digest('hex');
-        }
-        catch (err) {
-            return "";
-        }
-    }
-};
+// userSchema.method = {
+//     authenticate: function (plainpassword: any) {
+//         return this.securePassword(plainpassword) == this.encry_password;
+//     },
+//     securePassword: function (plainpassword: any) {
+//         if (!plainpassword) return "";
+//         try {
+//             return crypto
+//                 .createHmac('sha256', this.salt)
+//                 .update(plainpassword)
+//                 .digest('hex')
+//         } catch (err) {
+//             return "";
+//         }
+//     }
+// }
 exports.userModel = mongoose.model(modelName, userSchema);
+// username : String,
+// userImage: String
+// city: String,
+// state: String,
+// country: String,

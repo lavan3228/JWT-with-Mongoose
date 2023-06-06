@@ -33,7 +33,7 @@ class UserController {
                     return response_1.response.error(req, res, {}, "USER DETAILS NOT FOUND");
                 }
                 // const count = await userService.countAll();
-                return response_1.response.send(req, res, {}, "USER DETAILS NOT FOUND");
+                return response_1.response.send(req, res, allUsers, "USER DETAILS FOUND");
             }
             catch (error) {
                 return response_1.response.error(req, res, {}, "SOMETHING WENT WRONG");

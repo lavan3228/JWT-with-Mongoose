@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 // const log = common.loggerFactory.getLogger('Index');
+
 export class Index {
 
     /**
@@ -7,7 +8,7 @@ export class Index {
      * @param  {} dataModel
      * @param  {} condition
      */
-     findOne(dataModel, condition, projection = {}) {
+    findOne(dataModel, condition, projection = {}) {
         return new Promise((resolve, reject) => {
             return dataModel.findOne(condition, projection)
                 .then((result: any) => {
@@ -110,7 +111,7 @@ export class Index {
 
 
 
-    
+
 
 
     /**
@@ -224,9 +225,6 @@ export class Index {
         });
     }
 
-
-
-
     /**
      * Find data based on populate
      * @param  {} dataModel
@@ -254,7 +252,7 @@ export class Index {
         });
     }
 
-    
+
 
     /**
      * Update single data
@@ -269,8 +267,8 @@ export class Index {
                     return resolve(result);
                 })
                 .catch((err) => {
-                    if (condition && condition.transaction) {  
-                        condition.transaction.rollback(); 
+                    if (condition && condition.transaction) {
+                        condition.transaction.rollback();
                         // log.error('Index.update: catch inside transaction'); 
                     }
                     return reject(err);
@@ -278,7 +276,7 @@ export class Index {
         });
     }
 
-    
+
 
     /**
      * Bulk insert data

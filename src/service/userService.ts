@@ -1,4 +1,6 @@
+// import { condition } from "sequelize";
 import { userModel } from "../models/user";
+import UserToken from "../models/userToken";
 import { Index } from "./index";
 
 
@@ -8,8 +10,29 @@ class UserService extends Index {
         return await this.findOne(userModel, condition);
     }
 
+    findToken = async (condition) => {
+        return await this.findOne(UserToken, condition);
+    }
+
+    mongoFind = async (condition) => {
+        return await this.mongoFindAll(userModel, condition);
+    }
+
+    // /**
+    //  * @condition
+    //  * To get all patient details
+    //  */
+    // patientDetails = async (condition, projection = {}) => {
+    //     const result: any = await this.find(patientModel, condition, projection);
+    //     return result;
+    // }
+
     save = async (record: any) => {
         return await this.create(userModel, record);
+    }
+
+    saveUserToken = async (record: any) => {
+        return await this.create(UserToken, record);
     }
 
     update = async (whereCondition: any, updateData: any) => {
@@ -21,7 +44,7 @@ class UserService extends Index {
     }
 
     //  To get payment details
-     findPayment = async (condition: any) => {
+    findPayment = async (condition: any) => {
         const result: any = await this.findOne(userModel, condition);
         return result;
     }
@@ -51,4 +74,5 @@ class UserService extends Index {
         return result;
     }
 }
+
 export const userService = new UserService();

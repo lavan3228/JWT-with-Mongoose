@@ -16,10 +16,10 @@ class ProductService extends Index {
         return await this.updateOne(productModel, whereCondition, updateData);
     }
 
-    
+
 
     //  To get payment details
-     findPayment = async (condition: any) => {
+    findPayment = async (condition: any) => {
         const result: any = await this.findOne(productModel, condition);
         return result;
     }
@@ -49,4 +49,5 @@ class ProductService extends Index {
         return result;
     }
 }
+
 export const productService = new ProductService();
