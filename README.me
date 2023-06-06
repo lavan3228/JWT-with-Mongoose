@@ -1,0 +1,54 @@
+The primary features of this ecommerce website application
+So, the features that we would include in the application that we would be developing are as follows.
+
+    Display the cart’s total bill and update it whenever the cart is updated by the user.
+    We are storing the JWT in Local Storage so that only logged-in users can purchase items.
+    Option to pay and checkout, thereby creating an order and emptying the cart.
+    Login and registration
+    Purchase Product.
+    Check Purchase Status.
+    PayPal Payment Option
+    User Reviews
+    Extensive Product Information
+    Find-in-Store
+    Update Profile
+    Detailed Shipping Information
+
+--------------------------------------------------------------
+
+const { GraphQLSchema, GraphQLObjectType, GraphQLString } = require('graphql');
+
+const schema = new GraphQLSchema({
+  query: new GraphQLObjectType({
+    name: 'HelloWorld',
+    fields: {
+      message: {
+        type: GraphQLString,
+        resolve: () => 'Hello World!'
+      }
+    }
+  })
+});
+
+-----------------------------------------------------------------
+
+const pino = require("pino")({
+  level: "info",
+  prettyPrint: true,
+  base: { service: "user-service" },
+  formatters: {
+    level: (label, number) => ({ level: label }),
+  },
+  transports: [
+    { stream: process.stdout },
+    { stream: require("fs").createWriteStream("error.log"), level: "error" },
+  ],
+});
+
+pino.error("This is an error message");
+pino.warn("This is a warning message");
+pino.info("This is an info message");
+
+-------------------------------------------------------
+
+reviews, ratings, discounts, shipping, payment

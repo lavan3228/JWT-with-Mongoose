@@ -18,6 +18,7 @@ const authenticateToken = (req, res, next) => {
     const authheader = req.headers["authorization"];
     if (authheader !== undefined) {
         jwtToken = authheader.split(" ")[1];
+        console.log(authheader, "sflaml");
     }
     if (authheader === undefined) {
         res.send({
@@ -26,8 +27,9 @@ const authenticateToken = (req, res, next) => {
         });
     }
     else {
-        jsonwebtoken_1.default.verify(jwtToken, "djsdbsbcnxnhbwdhj", (error, payload) => __awaiter(void 0, void 0, void 0, function* () {
+        jsonwebtoken_1.default.verify(jwtToken, process.env.ACCESS_TOKEN_PRIVATE_KEY, (error, payload) => __awaiter(void 0, void 0, void 0, function* () {
             if (error) {
+                console.log(error, "jdj");
                 res.send({
                     status: 401,
                     message: "Invalid Access Token"
@@ -41,3 +43,22 @@ const authenticateToken = (req, res, next) => {
     }
 };
 exports.default = authenticateToken;
+// const config = require('config');
+// const jwt = require('jsonwebtoken');
+// function auth(req, res, next) {
+//     const token = req.header('x-auth-token');
+//     // Check for token
+//     if(!token){
+//         return res.status(401).json({ msg: 'No token, authorization denied'});
+//     }
+//     try{
+//         // Verify token
+//         const decoded = jwt.verify(token, config.get('jwtsecret'));
+//         //Add user from payload
+//         req.user = decoded;
+//     next();
+//     } catch(e){
+//         res.status(400).json({ msg:'Token is not valid'});
+//     }
+// }
+// module.exports = auth;

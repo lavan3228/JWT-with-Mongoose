@@ -31,11 +31,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validator = void 0;
 const Joi = __importStar(require("@hapi/joi"));
 const response_1 = require("../utils/response");
 const joi_1 = require("joi");
+const joi_password_complexity_1 = __importDefault(require("joi-password-complexity"));
+(0, joi_password_complexity_1.default)().default;
 // const log = commonComponent.common.loggerFactory.getLogger('validator');
 class ValidatorUtil {
     constructor() {
@@ -47,17 +52,19 @@ class ValidatorUtil {
          */
         this.signup = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log("eejj");
+                console.log("eejj", req.body);
                 if (!req.body || !req.body.attributes || Object.keys(req.body).length === 0) {
                     return response_1.response.error(req, res, {}, "INVALID-REQUEST");
                 }
                 const payload = req.body.attributes;
+                console.log(payload, "djhdff");
                 const schema = Joi.object().keys({
-                    name: Joi.string().required(),
+                    firstname: Joi.string().required(),
                     lastname: Joi.string().required(),
-                    email: Joi.string().required(),
+                    email: Joi.string().email().required().label("Email"),
                     password: Joi.string().required(),
-                });
+                    mobileNumber: Joi.string().required()
+                }).unknown();
                 const { error } = schema.validate(payload);
                 if (error === null || error === undefined) {
                     next();
@@ -67,6 +74,7 @@ class ValidatorUtil {
                 }
             }
             catch (err) {
+                console.log(err, "************");
                 response_1.response.error(req, res, err, 'SOME-THING-WENT-WRONG');
             }
         });
@@ -84,8 +92,8 @@ class ValidatorUtil {
                 }
                 const payload = req.body.attributes;
                 const schema = Joi.object().keys({
-                    email: Joi.string().required(),
-                    password: Joi.string().required(),
+                    email: Joi.string().email().required().label("Email"),
+                    password: Joi.string().required().label("Password"),
                 });
                 const { error } = schema.validate(payload);
                 if (error === null || error === undefined) {
@@ -195,6 +203,28 @@ class ValidatorUtil {
                 response_1.response.error(req, res, err, 'SOME-THING-WENT-WRONG');
             }
         });
+        this.refreshTokenBodyValidation = (req, res, next) => {
+            try {
+                if (!req.body || Object.keys(req.body).length === 0) {
+                    return response_1.response.error(req, res, {}, "INVALID-REQUEST");
+                }
+                const payload = req.body;
+                console.log(payload, "jfdjd");
+                const schema = Joi.object({
+                    refreshToken: Joi.string().required().trim().label("Refresh Token"),
+                });
+                const { error } = schema.validate(payload);
+                if (error === null || error === undefined) {
+                    next();
+                }
+                else {
+                    return response_1.response.error(req, res, error.details[0].message, 'REQUIRED-FIELDS-ARE-MISSING');
+                }
+            }
+            catch (err) {
+                response_1.response.error(req, res, err, 'SOME-THING-WENT-WRONG');
+            }
+        };
     }
 }
 exports.validator = new ValidatorUtil();

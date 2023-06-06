@@ -27,7 +27,12 @@ exports.productModel = void 0;
 const mongoose = __importStar(require("mongoose"));
 const modelName = 'Product';
 const productSchema = new mongoose.Schema({
-    name: {
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    },
+    productName: {
         type: String,
         trim: true,
         required: true,

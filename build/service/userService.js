@@ -8,9 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userService = void 0;
+// import { condition } from "sequelize";
 const user_1 = require("../models/user");
+const userToken_1 = __importDefault(require("../models/userToken"));
 const index_1 = require("./index");
 class UserService extends index_1.Index {
     constructor() {
@@ -18,8 +23,25 @@ class UserService extends index_1.Index {
         this.find = (condition) => __awaiter(this, void 0, void 0, function* () {
             return yield this.findOne(user_1.userModel, condition);
         });
+        this.findToken = (condition) => __awaiter(this, void 0, void 0, function* () {
+            return yield this.findOne(userToken_1.default, condition);
+        });
+        this.mongoFind = (condition) => __awaiter(this, void 0, void 0, function* () {
+            return yield this.mongoFindAll(user_1.userModel, condition);
+        });
+        // /**
+        //  * @condition
+        //  * To get all patient details
+        //  */
+        // patientDetails = async (condition, projection = {}) => {
+        //     const result: any = await this.find(patientModel, condition, projection);
+        //     return result;
+        // }
         this.save = (record) => __awaiter(this, void 0, void 0, function* () {
             return yield this.create(user_1.userModel, record);
+        });
+        this.saveUserToken = (record) => __awaiter(this, void 0, void 0, function* () {
+            return yield this.create(userToken_1.default, record);
         });
         this.update = (whereCondition, updateData) => __awaiter(this, void 0, void 0, function* () {
             return yield this.updateOne(user_1.userModel, whereCondition, updateData);
