@@ -17,7 +17,6 @@ class CartService extends Index {
     }
 
 
-
     //  To get payment details
     findPayment = async (condition: any) => {
         const result: any = await this.findOne(cartModel, condition);
