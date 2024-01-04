@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -23,12 +23,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.orderModel = exports.productCart = void 0;
+exports.orderModel = void 0;
 const mongoose = __importStar(require("mongoose"));
+// mongoose.pluralize(null);
+// mongoose.set('strictQuery', false);
+//mongoose.set('useFindAndModify', false);
+// import { orderTestModel } from './orderTest';
+// import { patientModel } from './patient';
 const productCartSchema = new mongoose.Schema({
     productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        type: String,
+        // ref: "Product",
         required: true
     },
     productName: {
@@ -56,20 +61,37 @@ const orderSchema = new mongoose.Schema({
         required: true
     },
     updated: Date,
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+    userId: {
+        type: String,
+        // ref: "User"
+        required: true
     },
     // paymentId: { type: String },
     status: {
         type: String,
-        default: "Received",
-        enum: ["Cancelled", "Delivered", "Shipped", "Processing", "Received"]
+        default: "completed",
+        enum: ["draft", "cancelled", "Delivered", "Shipped", "Processing", "pending", "completed"]
     },
-    cart: {
-        type: Object,
-        required: true
-    },
-}, { timestamps: true });
-exports.productCart = mongoose.model("ProductCart", productCartSchema);
+    actual_amount: { type: Number, default: 0 },
+    amount_after_discount: { type: Number, default: 0 },
+    paid_amount: { type: Number, default: 0 },
+    refund_amount: { type: Number, default: 0 },
+    // status: { type: Number, default: 0 },   // order status like draft, pending, completed, cancelled, report generated
+    report_generated_time: { type: Date },
+    payment_status: { type: Number, default: 1 },
+    is_cash_on_collection: { type: Boolean, default: false },
+    created_user_role: { type: String },
+    created_date_time: { type: Date, default: Date.now },
+    created_by: { type: String },
+    modified_date_time: { type: Date },
+    modified_by: { type: String },
+    invoice_account: { type: String },
+    is_franchise: { type: Boolean, default: 0 },
+    vendor_code: { type: String },
+    // cart: {
+    //     type: Object,
+    //     required: true
+    // },
+}, { timestamps: { createdAt: 'created_date_time', updatedAt: 'modified_date_time' } });
+// export const productCart = mongoose.model("ProductCart", productCartSchema);
 exports.orderModel = mongoose.model("Order", orderSchema);

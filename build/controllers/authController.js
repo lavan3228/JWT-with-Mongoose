@@ -27,7 +27,8 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const userService_1 = require("../service/userService");
 const generateToken_1 = __importDefault(require("../utils/generateToken"));
 const verifyRefreshToken_1 = __importDefault(require("../utils/verifyRefreshToken"));
-const userToken_1 = __importDefault(require("../models/userToken"));
+const chalk_1 = __importDefault(require("chalk"));
+// const chalk = require('chalk');
 class AuthController {
     constructor() {
         /**
@@ -36,18 +37,21 @@ class AuthController {
          * @param res
          * @returns
          */
-        this.signup = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.registerUser = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const payload = req.body.attributes;
                 console.log(payload.email, 'payload');
                 const condition = { email: payload.email };
-                const userexists = yield userService_1.userService.find(condition);
-                console.log(userexists, "jdhfh");
-                if (userexists) {
+                const userexist = yield userService_1.userService.find(condition);
+                console.log(userexist, "jdhfh");
+                if (userexist) {
                     return res.status(400).send({
                         message: 'User with given email already exist',
                     });
                 }
+                // if(payload.password !== payload.confirmpassword) {
+                //     return response.send(req, res, {}, "Passwords are not matching");
+                // }
                 const salt = yield bcrypt_1.default.genSalt(Number(process.env.SALT));
                 // Encrypt password
                 const hashedPassword = yield bcrypt_1.default.hash(payload.password, salt);
@@ -67,11 +71,11 @@ class AuthController {
                 if (!newUser) {
                     return response_1.response.error(req, res, {}, "NOT able to save user in DB");
                 }
-                return response_1.response.send(req, res, {}, "Account created sucessfully");
+                return response_1.response.send(req, res, {}, "Registered Sucessfully");
             }
             catch (err) {
                 console.log(err, "*******");
-                return response_1.response.error(req, res, {}, 'Internal Server Error');
+                return response_1.response.error(req, res, {}, 'Registered Internal Server Error');
             }
         });
         /**
@@ -80,11 +84,15 @@ class AuthController {
          * @param res
          * @returns
          */
-        this.signin = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.loginUser = (req, res) => __awaiter(this, void 0, void 0, function* () {
             log.info("sign in method start");
             try {
+                console.log(chalk_1.default.blue("login started!"));
                 const payload = req.body.attributes;
+                log.info({ jsonObject: payload, description: "123 User data" });
+                log.error({ jsonObject: payload, description: "456 User data" });
                 console.log(payload, "sai payload");
+                log.info("sign in method start");
                 const userCondition = {
                     email: payload.email
                 };
@@ -93,11 +101,13 @@ class AuthController {
                 log.info({ jsonObject: user, description: "get User data" });
                 if (!user) {
                     console.log("sai jdjdj");
-                    return response_1.response.error(req, res, {}, "User does not exist");
+                    return response_1.response.error(req, res, {}, "User Not Found");
                 }
                 const checkAPassword = yield bcrypt_1.default.compare(payload.password, user.password);
                 console.log(checkAPassword, "chack");
                 if (!checkAPassword) {
+                    log.error("jjdj");
+                    log.error({ jsonObject: {}, description: "error invalid credentials" });
                     return response_1.response.error(req, res, {}, "Invalid credentials");
                 }
                 const { accessToken, refreshToken } = yield (0, generateToken_1.default)(user);
@@ -166,29 +176,28 @@ class AuthController {
             console.log(tokenDetails, "hdhdf");
             if (tokenDetails.error === false) {
                 const payload = { _id: tokenDetails.payload._id, roles: tokenDetails.roles };
-                const accessToken = jsonwebtoken_1.default.sign(payload, process.env.REFRESH_TOKEN_PRIVATE_KEY, { expiresIn: "14m" });
+                const accessToken = jsonwebtoken_1.default.sign(payload, process.env.ACCESS_TOKEN_PRIVATE_KEY, { expiresIn: "15m" });
+                const refreshToken = jsonwebtoken_1.default.sign(payload, process.env.REFRESH_TOKEN_PRIVATE_KEY, { expiresIn: "1d" });
                 return res.status(200).json({
                     status: true,
-                    accessToken,
+                    accessToken, refreshToken,
                     message: "Access token created successfully",
                 });
             }
             return res.status(400).json(tokenDetails.message);
         });
         // logout
-        this.signout = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.logoutUser = (req, res) => __awaiter(this, void 0, void 0, function* () {
             log.info("sign out method start");
             try {
-                const userToken = yield userToken_1.default.findOne({ token: req.body.refreshToken });
+                const userToken = yield userService_1.userService.find({ token: req.body.refreshToken });
                 if (!userToken) {
                     console.log("dndd");
-                    return res
-                        .status(200)
-                        .json({ status: true, message: "Logged Out Sucessfully" });
+                    return response_1.response.send(req, res, { status: true, message: "Logged Out Sucessfully" }, "Success");
                 }
                 console.log("djjd");
-                yield userToken.remove();
-                res.status(200).json({ error: false, message: "Logged Out Sucessfully" });
+                yield userService_1.userService.delete({ token: req.body.refreshToken });
+                res.status(200).json({ status: true, message: "Logged Out Sucessfully lavan" });
             }
             catch (err) {
                 console.log(err);

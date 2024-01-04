@@ -23,6 +23,9 @@ class UserService extends index_1.Index {
         this.find = (condition) => __awaiter(this, void 0, void 0, function* () {
             return yield this.findOne(user_1.userModel, condition);
         });
+        this.delete = (condition) => __awaiter(this, void 0, void 0, function* () {
+            return yield this.deleteOne(user_1.userModel, condition);
+        });
         this.findToken = (condition) => __awaiter(this, void 0, void 0, function* () {
             return yield this.findOne(userToken_1.default, condition);
         });
@@ -75,6 +78,12 @@ class UserService extends index_1.Index {
         this.patientFindOneAndUpdateUpsert = (condition, data) => __awaiter(this, void 0, void 0, function* () {
             const result = yield this.findOneAndUpdateUpsert(user_1.userModel, condition, data);
             return result;
+        });
+        this.getDtae = (reqbody) => __awaiter(this, void 0, void 0, function* () {
+            const respObj = [];
+            const result = 50;
+            reqbody.resultt = result;
+            return respObj;
         });
     }
 }
