@@ -3,12 +3,18 @@ import { productModel } from "../models/product";
 import validation from "../joiValidation";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import moment from 'moment';
 import { loggerFactory } from '../utils/logger/loggerFactory';
 const log = loggerFactory.getLogger('orderController');
 import formidable from 'formidable';
 import * as fs from "fs";
 import { productService } from "../service/productService";
 import { response } from '../utils/response';
+import { common } from "../utils/common";
+import { productStatus } from "../utils/enumValues";
+const { PDFDocumentFactory, PDFDocumentWriter, StandardFonts } = require('pdf-lib');
+// import PDFDocumentFactory, { PDFDocumentWriter } from 'pdf-lib';
+// const fs = require('fs');
 
 
 
@@ -23,44 +29,26 @@ class ProductController {
      * @param res 
      */
     createProduct = async (req, res) => {
+        console.log("create product start lavan")
         try {
-            let form = new formidable.IncomingForm();
-            // form = formidable({ multiples: true });
-            // form.KeepExtensions = true;
-            // console.log(form, "erfjbre")
-            form.parse(req, async (err, filds, file: any) => {
-                // console.log(filds, file, "erjkn")
-                if (err) {
-                    return response.error(req, res, {}, 'problem with image');
-                }
+            const payload = req.body;
+            const result = {
+                productName: payload.productName,
+                description: payload.description,
+                price: payload.price,
+                category: payload.category,
+                stock: payload.stock,
+                imageUrl: payload.imageUrl,
+                userId: req.user_id
+            }
 
-                let product: any = new productModel(filds);
-                const { name, description, price, category, stock } = product;
-
-                if (!name || !description || !price || !category || !stock) {
-                    return response.error(req, res, {}, "please include all fields");
-                }
-
-                if (file.photo) {
-                    if (file.photo.size > 3000000) {
-                        return response.error(req, res, {}, "file size too big");
-                    }
-                }
-                // console.log("erkegnr")
-                if (file.photo && file.photo.filepath) {
-                    product.photo.data = fs.readFileSync(file.photo.filepath);
-                } else {
-                    return response.error(req, res, { 'Invalid file path:': file.photo }, "Failed");
-                }
-
-                product.photo.contentType = file.photo.type;
-
-                const data: any = await productService.save(product);
-                data.photo = '';
-                // console.log(data, "rjnfber")
-                return response.send(req, res, data, "SUCCESS");
-            });
+            const saveProduct = await productService.save(result);
+            if (!saveProduct) {
+                return response.error(req, res, {}, "save product failed")
+            }
+            return response.send(req, res, {}, "products successfully saved");
         } catch (error: any) {
+            console.log(error, "*******")
             res.send({
                 status: 400,
                 message: error.message
@@ -70,42 +58,31 @@ class ProductController {
 
     updateProduct = async (req, res) => {
         try {
-            let form = new formidable.IncomingForm();
-            // form = formidable({ multiples: true });
-            // form.KeepExtensions = true;
-            // console.log(form, "erfjbre")
-            form.parse(req, async (err, filds, file: any) => {
-                // console.log(filds, file, "erjkn")
-                if (err) {
-                    return response.error(req, res, {}, 'problem with image');
-                }
 
-                let product: any = new productModel(filds);
-                const { name, description, price, category, stock } = product;
+            // TODO 
+            console.log("get user profile start", req.user_id);
 
-                if (!name || !description || !price || !category || !stock) {
-                    return response.error(req, res, {}, "please include all fields");
-                }
+            const user_id = req.user_id;
+            const productId = req.params.id;
 
-                if (file.photo) {
-                    if (file.photo.size > 3000000) {
-                        return response.error(req, res, {}, "file size too big");
-                    }
-                }
-                // console.log("erkegnr")
-                if (file.photo && file.photo.filepath) {
-                    product.photo.data = fs.readFileSync(file.photo.filepath);
-                } else {
-                    return response.error(req, res, { 'Invalid file path:': file.photo }, "Failed");
-                }
+            if (!common.isValid(productId)) {
+                return response.error(req, res, {}, "provide product id")
+            }
 
-                product.photo.contentType = file.photo.type;
+            const updateStatusAsInactive = {
+                status: productStatus['INACTIVE'],  // In active
+                modified_date_time: moment().format(),
+                modified_by: req.user_id
+            };
 
-                const data: any = await productService.save(product);
-                data.photo = '';
-                // console.log(data, "rjnfber")
-                return response.send(req, res, data, "SUCCESS");
-            });
+            const productUpdate: any = await productService.update({ userId: user_id, _id: productId }, updateStatusAsInactive);
+            log.info({ jsonObject: productUpdate, description: 'product status update Response' });
+
+            if (!common.isObject(productUpdate)) {
+                return response.error(req, res, {}, 'product not updated');
+            }
+
+            return response.send(req, res, {}, 'SUCCESSFULLY-UPDATED-PRODUCT')
         } catch (error: any) {
             res.send({
                 status: 400,
@@ -116,42 +93,28 @@ class ProductController {
 
     getProductById = async (req, res) => {
         try {
-            let form = new formidable.IncomingForm();
-            // form = formidable({ multiples: true });
-            // form.KeepExtensions = true;
-            // console.log(form, "erfjbre")
-            form.parse(req, async (err, filds, file: any) => {
-                // console.log(filds, file, "erjkn")
-                if (err) {
-                    return response.error(req, res, {}, 'problem with image');
-                }
+            console.log("get user profile start", req.user_id);
 
-                let product: any = new productModel(filds);
-                const { name, description, price, category, stock } = product;
+            const user_id = req.user_id;
+            const productId = req.params.id;
 
-                if (!name || !description || !price || !category || !stock) {
-                    return response.error(req, res, {}, "please include all fields");
-                }
+            if (!common.isValid(productId)) {
+                return response.error(req, res, {}, "provide product id")
+            }
 
-                if (file.photo) {
-                    if (file.photo.size > 3000000) {
-                        return response.error(req, res, {}, "file size too big");
-                    }
-                }
-                // console.log("erkegnr")
-                if (file.photo && file.photo.filepath) {
-                    product.photo.data = fs.readFileSync(file.photo.filepath);
-                } else {
-                    return response.error(req, res, { 'Invalid file path:': file.photo }, "Failed");
-                }
+            const condition = {
+                userId: user_id,
+                _id: productId,
+                status: productStatus.ACTIVE
+            }
+            const getProduct: any = await productService.find(condition);
+            console.log(condition, getProduct, '325468759');
 
-                product.photo.contentType = file.photo.type;
+            if (!getProduct) {
+                return response.error(req, res, {}, "User not found")
+            }
 
-                const data: any = await productService.save(product);
-                data.photo = '';
-                // console.log(data, "rjnfber")
-                return response.send(req, res, data, "SUCCESS");
-            });
+            return response.send(req, res, { getProduct, count: getProduct.length }, "SUCCESS")
         } catch (error: any) {
             res.send({
                 status: 400,
@@ -162,88 +125,58 @@ class ProductController {
 
     getAllProducts = async (req, res) => {
         try {
-            let form = new formidable.IncomingForm();
-            // form = formidable({ multiples: true });
-            // form.KeepExtensions = true;
-            // console.log(form, "erfjbre")
-            form.parse(req, async (err, filds, file: any) => {
-                // console.log(filds, file, "erjkn")
-                if (err) {
-                    return response.error(req, res, {}, 'problem with image');
-                }
+            console.log("all users start", req.user_id)
 
-                let product: any = new productModel(filds);
-                const { name, description, price, category, stock } = product;
+            const condition = {
+                status: productStatus.ACTIVE
+            }
 
-                if (!name || !description || !price || !category || !stock) {
-                    return response.error(req, res, {}, "please include all fields");
-                }
+            const allProducts: any = await productService.findAll(condition);
 
-                if (file.photo) {
-                    if (file.photo.size > 3000000) {
-                        return response.error(req, res, {}, "file size too big");
-                    }
-                }
-                // console.log("erkegnr")
-                if (file.photo && file.photo.filepath) {
-                    product.photo.data = fs.readFileSync(file.photo.filepath);
-                } else {
-                    return response.error(req, res, { 'Invalid file path:': file.photo }, "Failed");
-                }
+            if (!allProducts || allProducts.length <= 0) {
+                return response.error(req, res, {}, "USER DETAILS NOT FOUND");
+            }
 
-                product.photo.contentType = file.photo.type;
-
-                const data: any = await productService.save(product);
-                data.photo = '';
-                // console.log(data, "rjnfber")
-                return response.send(req, res, data, "SUCCESS");
-            });
+            // const count = await userService.countAll();
+            return response.send(req, res, allProducts, "SUCCESS");
         } catch (error: any) {
-            res.send({
-                status: 400,
-                message: error.message
-            });
+            return response.error(req, res, {}, "SOMETHING WENT WRONG")
         }
     }
 
     deleteProduct = async (req, res) => {
+        console.log("delete proct start");
         try {
-            let form = new formidable.IncomingForm();
-            // form = formidable({ multiples: true });
-            // form.KeepExtensions = true;
-            // console.log(form, "erfjbre")
-            form.parse(req, async (err, filds, file: any) => {
-                // console.log(filds, file, "erjkn")
-                if (err) {
-                    return response.error(req, res, {}, 'problem with image');
-                }
+            const userId = req.user_id;
+            console.log(userId, "userid");
 
-                let product: any = new productModel(filds);
-                const { name, description, price, category, stock } = product;
+            const payload = req.params.id;
+            console.log(payload, "id3");
 
-                if (!name || !description || !price || !category || !stock) {
-                    return response.error(req, res, {}, "please include all fields");
-                }
+            if (!common.isValid(payload)) {
+                return response.error(req, res, {}, "required product id in params")
+            }
 
-                if (file.photo) {
-                    if (file.photo.size > 3000000) {
-                        return response.error(req, res, {}, "file size too big");
-                    }
-                }
-                // console.log("erkegnr")
-                if (file.photo && file.photo.filepath) {
-                    product.photo.data = fs.readFileSync(file.photo.filepath);
-                } else {
-                    return response.error(req, res, { 'Invalid file path:': file.photo }, "Failed");
-                }
+            const productId = payload;
+            const productDelete = {
+                status: productStatus['INACTIVE'],  // In active
+                modified_date_time: moment().format(),
+                modified_by: req.user_id
+            }
 
-                product.photo.contentType = file.photo.type;
+            console.log(productId, productDelete, "dj4j");
 
-                const data: any = await productService.save(product);
-                data.photo = '';
-                // console.log(data, "rjnfber")
-                return response.send(req, res, data, "SUCCESS");
-            });
+
+            const removeProduct: any = await productService.update({ _id: productId, userId: userId }, productDelete);
+            log.info({ jsonObject: removeProduct, description: 'product Remove Response' });
+
+            if (!common.isObject(removeProduct)) {
+                return response.error(req, res, {}, 'PRODUCT-NOT-REMOVED');
+            }
+
+            return response.send(req, res, {}, 'SUCCESSFULLY-REMOVED-PRODUCT')
+
+
         } catch (error: any) {
             res.send({
                 status: 400,
@@ -292,3 +225,63 @@ export const productController = new ProductController();
 //     });
 // }
 
+// const filePath = req.file.path;
+            // console.log(filePath, "jshdjh");
+            // let form = new formidable.IncomingForm();
+            // // form = formidable({ multiples: true });
+            // // form.KeepExtensions = true;
+            // console.log(form, "erfjbre")
+            // form.parse(req, async (err, filds, file: any) => {
+            //     console.log("djdjdk")
+            //     console.log(file, "erjkn");
+                // if (err) {
+                //     return response.error(req, res, {}, 'problem with image');
+                // }
+
+                // let product: any = new productModel(filds);
+                // const { productName, description, price, category, stock, userId } = product;
+
+                // if (!productName || !description || !price || !category || !stock || !userId) {
+                //     return response.error(req, res, {}, "please include all fields");
+                // }
+
+                // if (file.photo) {
+                //     if (file.photo.size > 3000000) {
+                //         return response.error(req, res, {}, "file size too big");
+                //     }
+                // }
+                // console.log("erkegnr")
+                // if (file.photo && file.photo.filepath) {
+                //     product.photo.data = fs.readFileSync(file.photo.filepath);
+                // } else {
+                //     return response.error(req, res, { 'Invalid file path:': file.photo }, "Failed");
+                // }
+
+                //     product.photo.contentType = file.photo.type;
+
+                //     const data: any = await productService.save(product);
+                //     data.photo = '';
+                //     // console.log(data, "rjnfber")
+                //     return response.send(req, res, data, "SUCCESS");
+
+                // const fileBytes: any = fs.readFileSync(file);
+
+                // // Load the PDF document from the file bytes
+                // const pdfDoc: any = await PDFDocumentFactory.load(fileBytes);
+                // const key = 'b41889aea5af4337aef6fab11ade3b94';
+                // const password = 'U2FsdGVkX185hRDDxUsUgNO65V17Z1ALGbCRqtIp3XVvtCBnSdcdUXadJ3lxqzB3'
+                // // Set the encryption algorithm and password
+                // pdfDoc.setEncryptionAlgorithm('aes256', true, key, password);
+
+                // // Remove the existing security handler (if any)
+                // pdfDoc.removeSecurity();
+
+                // // Save the decrypted PDF to a new buffer
+                // const pdfBytes = await PDFDocumentWriter.saveToBytes(pdfDoc);
+
+                // // Write the decrypted PDF buffer to a new file
+                // fs.writeFileSync('decrypted.pdf', pdfBytes);
+
+            //     console.log('PDF decrypted successfully!');
+            // });
+            // console.log("jsjdshd")

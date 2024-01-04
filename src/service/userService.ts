@@ -10,6 +10,10 @@ class UserService extends Index {
         return await this.findOne(userModel, condition);
     }
 
+    delete = async (condition) => {
+        return await this.deleteOne(userModel, condition);
+    }
+
     findToken = async (condition) => {
         return await this.findOne(UserToken, condition);
     }
@@ -72,6 +76,13 @@ class UserService extends Index {
     patientFindOneAndUpdateUpsert = async (condition: any, data: any) => {
         const result: any = await this.findOneAndUpdateUpsert(userModel, condition, data);
         return result;
+    }
+
+    getDtae = async (reqbody) => {
+        const respObj = [];
+        const result = 50;
+        reqbody.resultt = result;
+        return respObj;
     }
 }
 

@@ -32,23 +32,78 @@ const schema = new GraphQLSchema({
 
 -----------------------------------------------------------------
 
-const pino = require("pino")({
-  level: "info",
-  prettyPrint: true,
-  base: { service: "user-service" },
-  formatters: {
-    level: (label, number) => ({ level: label }),
+reviews, ratings, discounts, shipping, payment
+
+-----------------------------------------graph ql--------
+
+npm install graphql express-graphql
+
+const express = require('express');
+const { graphqlHTTP } = require('express-graphql');
+const { buildSchema } = require('graphql');
+const mongodb = require('mongodb');
+
+const app = express();
+const MongoClient = mongodb.MongoClient;
+const mongoURL = 'mongodb://localhost:27017/mydatabase';
+
+// GraphQL schema
+const schema = buildSchema(`
+  type User {
+    _id: ID!
+    name: String!
+    email: String!
+  }
+
+  type Query {
+    users: [User]
+  }
+
+  type Mutation {
+    createUser(name: String!, email: String!): User
+  }
+`);
+
+// Resolver functions
+const root = {
+  users: async () => {
+    const client = await MongoClient.connect(mongoURL);
+    const db = client.db();
+    const usersCollection = db.collection('users');
+
+    return usersCollection.find().toArray();
   },
-  transports: [
-    { stream: process.stdout },
-    { stream: require("fs").createWriteStream("error.log"), level: "error" },
-  ],
+  createUser: async ({ name, email }) => {
+    const client = await MongoClient.connect(mongoURL);
+    const db = client.db();
+    const usersCollection = db.collection('users');
+
+    const newUser = { name, email };
+    const result = await usersCollection.insertOne(newUser);
+    return result.ops[0];
+  },
+};
+
+// GraphQL API endpoint
+app.use(
+  '/graphql',
+  graphqlHTTP({
+    schema,
+    rootValue: root,
+    graphiql: true, // Enable the GraphiQL UI for testing
+  })
+);
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
 
-pino.error("This is an error message");
-pino.warn("This is a warning message");
-pino.info("This is an info message");
+------------------------------------------------------------------------
 
--------------------------------------------------------
-
-reviews, ratings, discounts, shipping, payment
+Request rate limit validation
+        // * Header validator
+                 * NONCE VALIDATION 
+        // App , Source, Service and Domain validations
+        // * App key validator
+        // * Signature validator
+        // * Role validator

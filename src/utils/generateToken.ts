@@ -8,13 +8,13 @@ const generateTokens = async (user) => {
         const accessToken = jwt.sign(
             payload,
             process.env.ACCESS_TOKEN_PRIVATE_KEY,
-            { expiresIn: "14m" }
+            { expiresIn: "15000m" }
         );
 
         const refreshToken = jwt.sign(
             payload,
             process.env.REFRESH_TOKEN_PRIVATE_KEY,
-            { expiresIn: "30d" }
+            { expiresIn: "1d" }
         );
 
         const userToken: any = await userService.findToken({ userId: user._id });

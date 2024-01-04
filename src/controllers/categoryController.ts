@@ -19,6 +19,7 @@ class CategoryController {
      * @returns 
      */
     createCategory = async (req, res) => {
+        console.log("create category start")
         try {
             const payload = req.body.attributes;
             const categoryData: any = {
@@ -32,6 +33,7 @@ class CategoryController {
 
             return response.send(req, res, resCategory, "SUCCESS")
         } catch (error: any) {
+            console.log(error, "******")
             return response.error(req, res, error, "some-thing-went-wrong")
         }
     }
@@ -90,7 +92,7 @@ class CategoryController {
         }
     }
 
-    deleteCategory = async (req, res) => {
+    removeCategory = async (req, res) => {
         try {
             const payload = req.body.attributes;
             const categoryData: any = {

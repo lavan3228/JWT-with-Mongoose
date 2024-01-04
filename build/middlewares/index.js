@@ -17,6 +17,13 @@ const loggerFactory_1 = require("../utils/logger/loggerFactory");
 const log = loggerFactory_1.loggerFactory.getLogger('Middleware');
 class Middleware {
     /**
+     * Build error
+     * @param  {} error
+     */
+    buildError(error) {
+        return response_1.response.buildError('REQUIRED-FIELDS-ARE-MISSING', 400, error);
+    }
+    /**
      * Route not allowed
      * @param  {} req
      * @param  {} res

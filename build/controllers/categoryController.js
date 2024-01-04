@@ -29,6 +29,72 @@ class CategoryController {
          * @returns
          */
         this.createCategory = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            console.log("create category start");
+            try {
+                const payload = req.body.attributes;
+                const categoryData = {
+                    name: payload.name
+                };
+                const resCategory = yield categoryService_1.categoryService.save(categoryData);
+                if (!resCategory) {
+                    return response_1.response.error(req, res, {}, "Error in save category");
+                }
+                return response_1.response.send(req, res, resCategory, "SUCCESS");
+            }
+            catch (error) {
+                console.log(error, "******");
+                return response_1.response.error(req, res, error, "some-thing-went-wrong");
+            }
+        });
+        this.getCategoryById = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const payload = req.body.attributes;
+                const categoryData = {
+                    name: payload.name
+                };
+                const resCategory = yield categoryService_1.categoryService.save(categoryData);
+                if (!resCategory) {
+                    return response_1.response.error(req, res, {}, "Error in save category");
+                }
+                return response_1.response.send(req, res, resCategory, "SUCCESS");
+            }
+            catch (error) {
+                return response_1.response.error(req, res, error, "some-thing-went-wrong");
+            }
+        });
+        this.getAllCategories = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const payload = req.body.attributes;
+                const categoryData = {
+                    name: payload.name
+                };
+                const resCategory = yield categoryService_1.categoryService.save(categoryData);
+                if (!resCategory) {
+                    return response_1.response.error(req, res, {}, "Error in save category");
+                }
+                return response_1.response.send(req, res, resCategory, "SUCCESS");
+            }
+            catch (error) {
+                return response_1.response.error(req, res, error, "some-thing-went-wrong");
+            }
+        });
+        this.updateCategory = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const payload = req.body.attributes;
+                const categoryData = {
+                    name: payload.name
+                };
+                const resCategory = yield categoryService_1.categoryService.save(categoryData);
+                if (!resCategory) {
+                    return response_1.response.error(req, res, {}, "Error in save category");
+                }
+                return response_1.response.send(req, res, resCategory, "SUCCESS");
+            }
+            catch (error) {
+                return response_1.response.error(req, res, error, "some-thing-went-wrong");
+            }
+        });
+        this.deleteCategory = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const payload = req.body.attributes;
                 const categoryData = {

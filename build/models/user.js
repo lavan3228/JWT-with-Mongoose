@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema({
     lastname: {
         type: String,
         maxlength: 32,
+        required: true,
         trim: true
     },
     email: {
@@ -62,6 +63,11 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Please enter a valid password'],
         minlength: [6, 'Minimum password length must be 6 characters']
     },
+    // confirmpassword : {
+    //     type: String,
+    //     required: [true, 'Please enter a valid password'],
+    //     minlength: [6, 'Minimum password length must be 6 characters']
+    // },
     salt: String,
     role: {
         type: Number,
@@ -71,7 +77,16 @@ const userSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
-}, { timestamps: true });
+    // gender: {type: String, reuired: true},
+    // address: {type: String, required: true},
+    // dateOfBirth: {type: Date, required: true},
+    // city: {type: String, required: true}
+    // pincode: {type: String, required: true},
+    created_date_time: { type: Date, default: Date.now },
+    created_by: { type: String },
+    modified_date_time: { type: Date, default: Date.now },
+    modified_by: { type: String }
+}, { timestamps: { createdAt: 'created_date_time', updatedAt: 'modified_date_time' } });
 // userSchema.method = {
 //     authenticate: function (plainpassword: any) {
 //         return this.securePassword(plainpassword) == this.encry_password;

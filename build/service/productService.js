@@ -24,6 +24,9 @@ class ProductService extends index_1.Index {
         this.update = (whereCondition, updateData) => __awaiter(this, void 0, void 0, function* () {
             return yield this.updateOne(product_1.productModel, whereCondition, updateData);
         });
+        this.findAll = (condition) => __awaiter(this, void 0, void 0, function* () {
+            return yield this.mongoFindAll(product_1.productModel, condition);
+        });
         //  To get payment details
         this.findPayment = (condition) => __awaiter(this, void 0, void 0, function* () {
             const result = yield this.findOne(product_1.productModel, condition);
