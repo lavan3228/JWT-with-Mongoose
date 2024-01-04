@@ -16,7 +16,9 @@ class ProductService extends Index {
         return await this.updateOne(productModel, whereCondition, updateData);
     }
 
-
+    findAll = async (condition) => {
+        return await this.mongoFindAll(productModel, condition);
+    }
 
     //  To get payment details
     findPayment = async (condition: any) => {

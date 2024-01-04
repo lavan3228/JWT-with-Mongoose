@@ -57,9 +57,13 @@ class APIResponse {
         // let status: number = 400;
 
         try {
+            console.log(err, "fnfn8");
+            
             error = JSON.parse(err.message);
+            console.log(error, "ndhd4");
+            
 
-            status = error.code;
+            // status = error.code;
             respMessage = languages.getText(req.headers['x-language'], error.msg);
 
             result = {
@@ -67,6 +71,8 @@ class APIResponse {
                 message: respMessage
             };
         } catch (r) {
+            console.log(err, "dhjd8");
+            
             error = err;
 
             respMessage = languages.getText(req.headers['x-language'], defaultMessage);
@@ -75,6 +81,9 @@ class APIResponse {
                 message: respMessage
             };
         }
+
+        console.log(result, "jdjd9");
+        
 
         // const config: ServerConfiguration = configIndex.getServerConfig();
         const errStack = (err || '').stack || '';

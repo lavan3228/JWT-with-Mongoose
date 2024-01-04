@@ -1,5 +1,7 @@
+'use strict';
 import * as _ from 'lodash';
-// const log = common.loggerFactory.getLogger('Index');
+import { loggerFactory } from '../utils/logger/loggerFactory';
+const log = loggerFactory.getLogger('Index');
 
 export class Index {
 
@@ -11,6 +13,23 @@ export class Index {
     findOne(dataModel, condition, projection = {}) {
         return new Promise((resolve, reject) => {
             return dataModel.findOne(condition, projection)
+                .then((result: any) => {
+                    return resolve(result);
+                })
+                .catch((err) => {
+                    return reject(err);
+                });
+        });
+    }
+
+    /**
+     * Delete one
+     * @param  {} dataModel
+     * @param  {} condition
+     */
+    deleteOne(dataModel, condition, projection = {}) {
+        return new Promise((resolve, reject) => {
+            return dataModel.deleteOne(condition, projection)
                 .then((result: any) => {
                     return resolve(result);
                 })
@@ -54,17 +73,17 @@ export class Index {
         });
     }
 
-    // deleteMany(dataModel, condition) {
-    //     return new Promise((resolve, reject) => {
-    //         return dataModel.deleteMany(condition)
-    //             .then((result) => {
-    //                 return resolve(result);
-    //             })
-    //             .catch((err) => {
-    //                 return reject(err);
-    //             });
-    //     });
-    // }
+    deleteMany(dataModel, condition) {
+        return new Promise((resolve, reject) => {
+            return dataModel.deleteMany(condition)
+                .then((result) => {
+                    return resolve(result);
+                })
+                .catch((err) => {
+                    return reject(err);
+                });
+        });
+    }
 
     updateMany(dataModel, condition, data) {
         return new Promise((resolve, reject) => {
@@ -173,6 +192,18 @@ export class Index {
         });
     }
 
+    findOneAndUpdateUpserts = (dataModel, data, condition) => {
+        return new Promise((resolve, reject) => {
+            return dataModel.findOneAndUpdate(condition, data, { new: true, upsert: true })
+                .then((result: any) => {
+                    return resolve(result);
+                })
+                .catch((err) => {
+                    return reject(err);
+                });
+        });
+    }
+
     /**
      * Find all data
      * @param  {} dataModel
@@ -236,6 +267,36 @@ export class Index {
     }
 
     /**
+     * Find single data based on populate
+     * @param  {} dataModel
+     * @param  {} condition
+     */
+    findOnePopulate = async (dataModel, condition, patient) => {
+        const data = await dataModel.findOne(condition).populate(patient);
+        return data;
+    }
+
+    /**
+     * Find single data based on populate and options
+     * @param  {} dataModel
+     * @param  {} condition
+     */
+    findOnePopulateWithOptions = async (dataModel, condition, projection = {}, options = {}, populateObj) => {
+        const data = await dataModel.findOne(condition, projection, options).populate(populateObj);
+        return data;
+    }
+
+    /**
+     * Find data based on populate
+     * @param  {} dataModel
+     * @param  {} condition
+     */
+    findAllPopulate = async (dataModel, condition, projection = {}, options = {}, populateModel) => {
+        const data = await dataModel.find(condition, projection, options).populate(populateModel);
+        return data;
+    }
+
+    /**
      * Find aggregate
      * @param {} dataModel
      * @param {} condition
@@ -276,6 +337,79 @@ export class Index {
         });
     }
 
+    /**
+     * Replace mis data when update
+     */
+    findOneAndReplace(dataModel, condition, data) {
+        return new Promise((resolve, reject) => {
+            return dataModel.findOneAndReplace(condition, data, { returnNewDocument: true })
+                .then((result) => {
+                    return resolve(result);
+                })
+                .catch((err) => {
+                    return reject(err);
+                });
+        });
+    }
+
+    populateMethod = async (dataModel, condition, populateId) => {
+        const data = await dataModel.findOne(condition).populate(populateId)
+        return data;
+    }
+
+    /**
+     * Find data based on single populate
+     * @param  {} dataModel
+     * @param  {} condition
+     */
+    findWithPopulate = async (dataModel, condition, projection, options = {}, populateObj) => {
+        return new Promise((resolve, reject) => {
+            return dataModel.find(condition, projection, options).populate(populateObj)
+                .then((result) => {
+                    return resolve(result);
+                })
+                .catch((err) => {
+                    // log.error('service populate', err);
+                    return reject(err);
+                });
+        });
+    }
+
+    /**
+     * Find data based on multiple populate
+     * @param  {} dataModel
+     * @param  {} condition
+     */
+    multiPopulate = async (dataModel, condition, projection = {}, options, populateObj1, populateObj2, populateObj3) => {
+        return new Promise((resolve, reject) => {
+            return dataModel.find(condition, projection, options).populate(populateObj1).populate(populateObj2).populate(populateObj3)
+                .then((result) => {
+                    return resolve(result);
+                })
+                .catch((err: any) => {
+                    // log.error('service multiPopulate', err);
+                    return reject(err);
+                });
+        });
+
+    }
+
+    /**
+     * Find with two populate
+     */
+    findWithTwoPopulate = async (dataModel, condition, projection = {}, options, populateObj1, populateObj2) => {
+        return new Promise((resolve, reject) => {
+            return dataModel.find(condition, projection, options).populate(populateObj1).populate(populateObj2)
+                .then((result) => {
+                    return resolve(result);
+                })
+                .catch((err) => {
+                    // log.error('service multiPopulate', err);
+                    return reject(err);
+                });
+        });
+
+    }
 
 
     /**
@@ -455,4 +589,28 @@ export class Index {
     //             });
     //     });
     // }
+
+    /**
+     * Note: Only for mongo DB
+     * update data
+     * @param dataModel 
+     * @param data 
+     * @param condition 
+     * @returns 
+     */
+    mongoUpdate(dataModel, data, condition) {
+        return new Promise((resolve, reject) => {
+            return dataModel.updateOne(data, condition)
+                .then((result) => {
+                    return resolve(result);
+                })
+                .catch((err) => {
+                    // if (condition && condition.transaction) {
+                    //     condition.transaction.rollback();
+                    //     log.error('Index.update: catch inside transaction');
+                    // }
+                    return reject(err);
+                });
+        });
+    }
 }

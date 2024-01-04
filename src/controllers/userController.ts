@@ -24,7 +24,7 @@ class UserController {
     // 1. get all Users
     allUsers = async (req, res) => {
         try {
-            console.log("jejwjeh")
+            console.log("all users start", req.body.username)
             const allUsers: any = await orderService.find({});
 
             if (!allUsers || allUsers.length <= 0) {
@@ -41,7 +41,9 @@ class UserController {
     // 2.get single author 
     getUser = async (req, res) => {
         try {
-            const id = req.params.id;
+            console.log("get user profile start", req.user_id);
+
+            const id = req.user_id;
             const getUser = await userService.find({ _id: id });
 
             if (!getUser) {
@@ -54,48 +56,20 @@ class UserController {
         }
     }
 
-    // 3.create user
-    createUser = async (req, res) => {
-        try {
-            console.log("ehrfj")
-            const result = req.body;
-            const author = await userModel.create({
-                name: result.name,
-                lastname: result.lastname,
-                email: result.email,
-                userInfo: result.userInfo,
-                password: result.password,
-                salt: result.salt,
-                role: result.role
-            });
-            const data = await author.save()
-            res.send({
-                status: 201,
-                message: "Success",
-                data: data
-            })
-        } catch (error: any) {
-            res.send({
-                status: 400,
-                message: error.message
-
-            });
-        }
-    }
-
-    // 4. update author
+    // update user details
     updateUser = async (req, res) => {
         try {
-            const _id = req.params.id;
-            const result = await validation.updateAuthorValidation.validateAsync(req.body);
-            // const getAuthor = await userService.findAndUpdateTask(_id, result, {
-            //     new: true
-            // });
-            // res.send({
-            //     status: 200,
-            //     message:"Success",
-            //     data: getAuthor 
-            // })
+            
+            const id = req.user_id;
+            const getUser = await userService.find({ _id: id });
+            // const exist = await userModel.findById(req.user.id);
+
+            if (!getUser) {
+                return response.error(req, res, {}, "User not found")
+            }
+
+            return response.send(req, res, getUser, "Success")
+
         } catch (error: any) {
             res.send({
                 status: 400,
@@ -104,28 +78,24 @@ class UserController {
         }
     }
 
-    // // 5. delete author by id
-    // deleteAuthor = async (req:Request, res:Response) =>{
-    //     try{
-    //         const deleteAuthor = await Author.findByIdAndDelete(req.params.id)
-    //         if (!deleteAuthor) {
-    //             res.send({
-    //                 status: 400,
-    //                 message: "Author not exists",
-    //             })
-    //         }
-    //         res.send({
-    //             status: 200,
-    //             message: "Success",
-    //             data: deleteAuthor
-    //         })
-    //     }catch(err:any){
-    //         res.send({
-    //             status: 400,
-    //             message: err.message,
-    //         })
-    //     }
-    // }
+    // update user details
+    deleteUser = async (req, res) => {
+        try {
+            const user_id = req.user_id;
+            const getUser = await userService.find({ _id: user_id });
+
+            if (!getUser) {
+                return response.error(req, res, {}, "User not found")
+            }
+
+        } catch (error: any) {
+            res.send({
+                status: 400,
+                message: error.message
+            })
+        }
+    }
+
 }
 
 

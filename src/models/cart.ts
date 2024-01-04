@@ -1,18 +1,25 @@
-import mongoose from "mongoose";
+'use strict'
+import * as mongoose from "mongoose";
+// mongoose.pluralize(null);
+
 const modelName = 'Cart';
 
-const cartSchama: any = new mongoose.Schema({
+const cartSchema: any = new mongoose.Schema({
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         required: true,
-        ref: 'User'
+        // ref: 'User'
     },
     items: [{
         productId: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             required: true,
-            ref: 'Product'
+            // ref: 'Product'
         },
+        imageUrl: {
+            type: String,
+            required: true
+        }, 
         name: String,
         quantity: {
             type: Number,
@@ -20,14 +27,23 @@ const cartSchama: any = new mongoose.Schema({
             min: [1, 'Quantity can not be less then 1.'],
             default: 1
         },
-        price: Number
+        price: Number,
+        _id: false
     }],
     bill: {
         type: Number,
         required: true,
         default: 0
-    }
-});
+    },
+    status: { type: Number, default: 1 },  // 1: Active, 2: Inactive
+    created_date_time: { type: Date, default: Date.now },
+    created_by: { type: String },
+    modified_date_time: { type: Date, default: Date.now },
+    modified_by: { type: String }
 
-export const cartModel = mongoose.model(modelName, cartSchama);
- 
+}, { timestamps: { createdAt: 'created_date_time', updatedAt: 'modified_date_time' } }
+);
+
+// cartSchema.index({ patient_id: 1, test_code: 1, status: 1 });
+
+export const cartModel = mongoose.model(modelName, cartSchema);
