@@ -16,20 +16,20 @@ import VerifyRefreshToken from "../utils/verifyRefreshToken";
 import UserToken from '../models/userToken';
 import * as fs from 'fs';
 
-import * as AWS from 'aws-sdk';
+// import * as AWS from 'aws-sdk';
 // import chalk from 'chalk';
 // const chalk = require('chalk');
-const awsRegion = process.env.BUCKET_REGION_NAME;
+// const awsRegion = process.env.BUCKET_REGION_NAME;
 
-AWS.config.getCredentials((err) => {
-    if (err) {
-        console.log('Error in fetching credentials', err);
-    } else {
-        AWS.config.credentials;
-    }
-  });
-  AWS.config.update({ region: awsRegion });
-  const s3 = new AWS.S3({});
+// AWS.config.getCredentials((err) => {
+//     if (err) {
+//         console.log('Error in fetching credentials', err);
+//     } else {
+//         AWS.config.credentials;
+//     }
+//   });
+//   AWS.config.update({ region: awsRegion });
+//   const s3 = new AWS.S3({});
 class AuthController {
 
     /**
@@ -65,93 +65,93 @@ class AuthController {
      * @param dataAreaId 
      * @returns 
      */
-    async getMailTemplateFromDataBaseOld(fileName, template_url) {
-        let htmlPath: any = '';
-        try {
-            log.info({ jsonObject: fileName, description: 'getMailTemplateFromDataBase: start' });
-            const templatePath: any = process.env.EMAIL_TEMPLATE_PATH;
-            const s3BucketName: any = process.env.EMAIL_TEMPLATES_BUCKET;
+    // async getMailTemplateFromDataBaseOld(fileName, template_url) {
+    //     let htmlPath: any = '';
+    //     try {
+    //         log.info({ jsonObject: fileName, description: 'getMailTemplateFromDataBase: start' });
+    //         const templatePath: any = process.env.EMAIL_TEMPLATE_PATH;
+    //         const s3BucketName: any = process.env.EMAIL_TEMPLATES_BUCKET;
 
-            const params = {
-                Bucket: s3BucketName,
-                Key: template_url,
-            };
-            try {
-                const data = await s3.getObject(params).promise();
-                // Save the binary content to a file
-                // await fs.writeFile(htmlPath, data.Body, () => null);
-                log.info({ jsonObject: { fileName, htmlPath }, description: 'getMailTemplateFromDataBase: File saved successfully.' });
-            } catch (err) {
-                console.error('getMailTemplateFromDataBase: Catch Error ', err);
-            }
+    //         const params = {
+    //             Bucket: s3BucketName,
+    //             Key: template_url,
+    //         };
+    //         try {
+    //             const data = await s3.getObject(params).promise();
+    //             // Save the binary content to a file
+    //             // await fs.writeFile(htmlPath, data.Body, () => null);
+    //             log.info({ jsonObject: { fileName, htmlPath }, description: 'getMailTemplateFromDataBase: File saved successfully.' });
+    //         } catch (err) {
+    //             console.error('getMailTemplateFromDataBase: Catch Error ', err);
+    //         }
                 
-        } catch (err) {
-            // log.error('Error in common service getSmsTextFromDataBase', err);
-            return '';
-        }
-    }
+    //     } catch (err) {
+    //         // log.error('Error in common service getSmsTextFromDataBase', err);
+    //         return '';
+    //     }
+    // }
 
-    /**
-     * Get presigned url for etrf file
-     */
-    getPreSignedUrl = async (accesskey, secretKey, awsRegionName, key, expiry, bucketName) => {
-        const credentialss: any = {
-            accessKeyId: accesskey,
-            secretAccessKey: secretKey,
-        };
+    // /**
+    //  * Get presigned url for etrf file
+    //  */
+    // getPreSignedUrl = async (accesskey, secretKey, awsRegionName, key, expiry, bucketName) => {
+    //     const credentialss: any = {
+    //         accessKeyId: accesskey,
+    //         secretAccessKey: secretKey,
+    //     };
 
-        AWS.config.update({ credentials: credentialss, region: awsRegionName });
-        var s3Bucket = new AWS.S3();
+    //     AWS.config.update({ credentials: credentialss, region: awsRegionName });
+    //     var s3Bucket = new AWS.S3();
 
-        const params = {
-            Bucket: bucketName,
-            Key: key,
-            Expires: expiry, // validity of the link in seconds
-        };
+    //     const params = {
+    //         Bucket: bucketName,
+    //         Key: key,
+    //         Expires: expiry, // validity of the link in seconds
+    //     };
 
-        const url = await new Promise((resolve, reject) => {
-            s3Bucket.getSignedUrl('getObject', params, (err, url) => {
-                if (err) reject(err)
+    //     const url = await new Promise((resolve, reject) => {
+    //         s3Bucket.getSignedUrl('getObject', params, (err, url) => {
+    //             if (err) reject(err)
 
-                resolve(url)
-            })
-        });
+    //             resolve(url)
+    //         })
+    //     });
 
-        return url
-    }
+    //     return url
+    // }
 
-    deleteUrl = async (key, bucketName) => {
-        const params = {
-            Bucket: bucketName,
-            Key: key
-        };
+    // deleteUrl = async (key, bucketName) => {
+    //     const params = {
+    //         Bucket: bucketName,
+    //         Key: key
+    //     };
 
-        const data = await new Promise((resolve, reject) => {
-            s3.deleteObject(params, (err, data) => {
-                if (err) reject(err);
+    //     const data = await new Promise((resolve, reject) => {
+    //         s3.deleteObject(params, (err, data) => {
+    //             if (err) reject(err);
 
-                resolve(data);
-            })
-        })
-        return data;
-    }
+    //             resolve(data);
+    //         })
+    //     })
+    //     return data;
+    // }
 
 
-    getSignedUrl = async (key, expiry, bucketName) => {
-        const params = {
-            Bucket: bucketName,
-            Key: key,
-            Expires: expiry, // validity of the link in seconds
-        }
-        const url = await new Promise((resolve, reject) => {
-            s3.getSignedUrl('getObject', params, (err, url) => {
-                if (err) reject(err)
+    // getSignedUrl = async (key, expiry, bucketName) => {
+    //     const params = {
+    //         Bucket: bucketName,
+    //         Key: key,
+    //         Expires: expiry, // validity of the link in seconds
+    //     }
+    //     const url = await new Promise((resolve, reject) => {
+    //         s3.getSignedUrl('getObject', params, (err, url) => {
+    //             if (err) reject(err)
 
-                resolve(url)
-            })
-        })
-        return url
-    }
+    //             resolve(url)
+    //         })
+    //     })
+    //     return url
+    // }
 
     /**
      * Method for building the URL for an alternate of S3 Signed URL
@@ -162,53 +162,53 @@ class AuthController {
      * @param subBucket 
      * @returns 
      */
-    mappingS3Url = async (bucket, path, token, appId, subBucket: any = "", S: any = "") => {
+    // mappingS3Url = async (bucket, path, token, appId, subBucket: any = "", S: any = "") => {
 
-        const VAPT_LOGIC_ENABLED = true;
-        const VAPT_ALLOWED_APP_IDS_FOR_S3 = (process.env.VAPT_ALLOWED_APP_IDS_FOR_S3) ? (process.env.VAPT_ALLOWED_APP_IDS_FOR_S3).split(',').map(appId => appId.trim()) : [];
-        if (VAPT_LOGIC_ENABLED && VAPT_ALLOWED_APP_IDS_FOR_S3.includes(appId)) {
-            // bucket = (this.isValid(subBucket)) ? bucket + "/" + subBucket : bucket;
+    //     const VAPT_LOGIC_ENABLED = true;
+    //     const VAPT_ALLOWED_APP_IDS_FOR_S3 = (process.env.VAPT_ALLOWED_APP_IDS_FOR_S3) ? (process.env.VAPT_ALLOWED_APP_IDS_FOR_S3).split(',').map(appId => appId.trim()) : [];
+    //     if (VAPT_LOGIC_ENABLED && VAPT_ALLOWED_APP_IDS_FOR_S3.includes(appId)) {
+    //         // bucket = (this.isValid(subBucket)) ? bucket + "/" + subBucket : bucket;
 
-            // Generating the signature
-            const requestInObj: any = {
-                "B": bucket,
-                "K": path,
-                "x-auth-token": token,
-                "x-app-id": appId
-            };
+    //         // Generating the signature
+    //         const requestInObj: any = {
+    //             "B": bucket,
+    //             "K": path,
+    //             "x-auth-token": token,
+    //             "x-app-id": appId
+    //         };
 
-            // if (this.isValid(S)) {
-            //     requestInObj["S"] = S;
-            // }
+    //         // if (this.isValid(S)) {
+    //         //     requestInObj["S"] = S;
+    //         // }
 
-            // sort the object keys in asc order
-            let sortedByKeys = {};
-            Object.keys(requestInObj).sort().forEach(key => {
-                sortedByKeys[key] = requestInObj[key];
-            });
+    //         // sort the object keys in asc order
+    //         let sortedByKeys = {};
+    //         Object.keys(requestInObj).sort().forEach(key => {
+    //             sortedByKeys[key] = requestInObj[key];
+    //         });
 
-            log.info({
-                jsonObject: { sortedMethodInputs: JSON.stringify(sortedByKeys) }, description: 'mappingS3Url: Sorted method inputs'
-            });
+    //         log.info({
+    //             jsonObject: { sortedMethodInputs: JSON.stringify(sortedByKeys) }, description: 'mappingS3Url: Sorted method inputs'
+    //         });
 
-            // const signature = md5(JSON.stringify(sortedByKeys));
+    //         // const signature = md5(JSON.stringify(sortedByKeys));
 
-            // let mappingUrl: any = process.env.S3_IMAGE_RENDER_BASE_URL + '?B=' + bucket + '&K=' + path + '&x-auth-token=' + token + '&x-app-id=' + appId + '&x-signature=' + signature;
+    //         // let mappingUrl: any = process.env.S3_IMAGE_RENDER_BASE_URL + '?B=' + bucket + '&K=' + path + '&x-auth-token=' + token + '&x-app-id=' + appId + '&x-signature=' + signature;
 
-            // if (this.isValid(S)) {
-            //     mappingUrl = mappingUrl + '&S=' + S;
-            // }
+    //         // if (this.isValid(S)) {
+    //         //     mappingUrl = mappingUrl + '&S=' + S;
+    //         // }
 
-            // return mappingUrl;
-        } else {
-            const SIGNED_URL_EXPIRY_IN_SECONDS = 3600; // 1 hour
-            if (S && S.toLowerCase() === 'p') {
-                // return await this.getPpSignedUrl(path, SIGNED_URL_EXPIRY_IN_SECONDS, bucket);
-            } else {
-                return await this.getSignedUrl(path, SIGNED_URL_EXPIRY_IN_SECONDS, bucket);
-            }
-        }
-    }
+    //         // return mappingUrl;
+    //     } else {
+    //         const SIGNED_URL_EXPIRY_IN_SECONDS = 3600; // 1 hour
+    //         if (S && S.toLowerCase() === 'p') {
+    //             // return await this.getPpSignedUrl(path, SIGNED_URL_EXPIRY_IN_SECONDS, bucket);
+    //         } else {
+    //             return await this.getSignedUrl(path, SIGNED_URL_EXPIRY_IN_SECONDS, bucket);
+    //         }
+    //     }
+    // }
 
 
 

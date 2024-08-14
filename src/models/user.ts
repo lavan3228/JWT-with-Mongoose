@@ -46,7 +46,7 @@ const userSchema: any = new mongoose.Schema({
     salt: String,
     role: {
         type: Number,
-        default: "user"
+        default: 1
     },
 
     // role: {

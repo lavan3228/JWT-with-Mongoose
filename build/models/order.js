@@ -39,6 +39,10 @@ const productCartSchema = new mongoose.Schema({
     productName: {
         type: String,
     },
+    imageUrl: {
+        type: String,
+        required: true
+    },
     productQuantity: {
         type: Number,
         required: true,
@@ -69,16 +73,16 @@ const orderSchema = new mongoose.Schema({
     // paymentId: { type: String },
     status: {
         type: String,
-        default: "completed",
-        enum: ["draft", "cancelled", "Delivered", "Shipped", "Processing", "pending", "completed"]
+        default: "Recieved",
+        enum: ["Cancelled", "Delivered", "Shipped", "Processing", "Recieved"]
     },
-    actual_amount: { type: Number, default: 0 },
-    amount_after_discount: { type: Number, default: 0 },
+    actual_amount: { type: Number, default: 0 }, // total tests amount
+    amount_after_discount: { type: Number, default: 0 }, // after deduct promo code and discount amount
     paid_amount: { type: Number, default: 0 },
     refund_amount: { type: Number, default: 0 },
     // status: { type: Number, default: 0 },   // order status like draft, pending, completed, cancelled, report generated
-    report_generated_time: { type: Date },
-    payment_status: { type: Number, default: 1 },
+    report_generated_time: { type: Date }, // report generated time
+    payment_status: { type: Number, default: 1 }, // payment status of an order like pending or completed,
     is_cash_on_collection: { type: Boolean, default: false },
     created_user_role: { type: String },
     created_date_time: { type: Date, default: Date.now },
@@ -90,6 +94,12 @@ const orderSchema = new mongoose.Schema({
     vendor_code: { type: String },
     // cart: {
     //     type: Object,
+    //     required: true
+    // },
+    // deliveredAt: Date,
+    // shippedAt: Date,
+    // paidAt: {
+    //     type: Date,
     //     required: true
     // },
 }, { timestamps: { createdAt: 'created_date_time', updatedAt: 'modified_date_time' } });

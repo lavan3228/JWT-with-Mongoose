@@ -71,8 +71,13 @@ const userSchema = new mongoose.Schema({
     salt: String,
     role: {
         type: Number,
-        default: 0
+        default: "user"
     },
+    // role: {
+    //     type: String,
+    //     default: ROLES.Member,
+    //     enum: [ROLES.Admin, ROLES.Member, ROLES.Merchant]
+    //   },
     purchases: {
         type: Array,
         default: []
@@ -80,8 +85,9 @@ const userSchema = new mongoose.Schema({
     // gender: {type: String, reuired: true},
     // address: {type: String, required: true},
     // dateOfBirth: {type: Date, required: true},
-    // city: {type: String, required: true}
-    // pincode: {type: String, required: true},
+    // state: {type: String, required: true},
+    // city: {type: String, required: true},
+    // pincode: {type: Number, required: true},
     created_date_time: { type: Date, default: Date.now },
     created_by: { type: String },
     modified_date_time: { type: Date, default: Date.now },

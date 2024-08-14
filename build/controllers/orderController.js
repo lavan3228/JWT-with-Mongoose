@@ -50,12 +50,13 @@ class OrderController {
             try {
                 console.log("ehrfj");
                 const payload = req.body;
+                const user_id = req.user_id;
                 const saveOrderData = {
                     products: payload.products,
                     transaction_id: payload.transaction_id,
                     amount: payload.amount,
                     totalAmount: payload.totalAmount,
-                    userId: payload.userId,
+                    userId: user_id,
                     address: payload.address
                 };
                 const orderData = yield orderService_1.orderService.save(saveOrderData);
@@ -71,16 +72,15 @@ class OrderController {
         });
         this.getAllOrders = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log("ehrfj");
-                const payload = req.body.attributes;
-                const saveOrderData = {
-                    transaction_id: payload.transaction_id,
-                    amount: payload.amount,
-                    address: payload.address
+                console.log("get Orders start");
+                const user_id = req.user_id;
+                const orderCondition = {
+                    userId: user_id
                 };
-                const orderData = yield orderService_1.orderService.save(saveOrderData);
+                const orderData = yield orderService_1.orderService.find(orderCondition);
+                console.log(orderData, 'fnfhd7');
                 if (!orderData) {
-                    return response_1.response.error(req, res, {}, "Error in save order data");
+                    return response_1.response.error(req, res, {}, "Error when getting  all orders data");
                 }
                 return response_1.response.send(req, res, orderData, "SUCCESS");
             }

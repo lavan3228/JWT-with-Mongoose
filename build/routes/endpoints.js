@@ -38,6 +38,7 @@ class EndPoints {
         this.router.route('/myprofile')
             .get(middleware_1.default, userController_1.userController.getUser)
             .put(middleware_1.default, userController_1.userController.updateUser) // pending 
+            .put(middleware_1.default, userController_1.userController.deleteUser)
             .all(index_1.middleware.methodNotAllowed);
         // all users
         this.router.route('/allUsers')
@@ -61,7 +62,7 @@ class EndPoints {
             .all(index_1.middleware.methodNotAllowed);
         // Fetching categories and associated products
         this.router.route('/categories/:id')
-            .delete(middleware_1.default, validator_1.validator.category, categoryController_1.categoryController.deleteCategory)
+            .delete(middleware_1.default, validator_1.validator.category, categoryController_1.categoryController.removeCategory)
             .all(index_1.middleware.methodNotAllowed);
         // create orders
         this.router.route('/order')

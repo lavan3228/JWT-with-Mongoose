@@ -79,8 +79,8 @@ class UserController {
         // update user details
         this.deleteUser = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const id = req.params.id;
-                const getUser = yield userService_1.userService.find({ _id: id });
+                const user_id = req.user_id;
+                const getUser = yield userService_1.userService.find({ _id: user_id });
                 if (!getUser) {
                     return response_1.response.error(req, res, {}, "User not found");
                 }

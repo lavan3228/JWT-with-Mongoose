@@ -50,3 +50,26 @@ mongoose_1.default.connect(url, () => {
 //     }
 // }
 // module.exports = connectDB;
+// default.json
+// {
+//     "mongoURI":
+//       "mongodb+srv://mern123:<password>@mernatoz-9kdpd.mongodb.net/test?retryWrites=true&w=majority"
+//   }
+//    /* Replace <password> with your database password */
+//   // db.js
+//   const mongoose = require('mongoose');
+//   const config = require('config');
+//   const db = config.get('mongoURI');
+//   const connectDB = async () => {
+//     try {
+//       mongoose.set('strictQuery', true);
+//       await mongoose.connect(db, {
+//         useNewUrlParser: true,
+//       });
+//       console.log('MongoDB is Connected...');
+//     } catch (err) {
+//       console.error(err.message);
+//       process.exit(1);
+//     }
+//   };
+//   module.exports = connectDB;

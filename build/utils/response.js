@@ -38,8 +38,8 @@ const languages_1 = require("../languages");
 const loggerFactory_1 = require("../utils/logger/loggerFactory");
 const log = loggerFactory_1.loggerFactory.getLogger('APIResponse');
 class APIResponse {
-    send(req, res, data, textMessage = '', status = 200) {
-        return __awaiter(this, void 0, void 0, function* () {
+    send(req_1, res_1, data_1) {
+        return __awaiter(this, arguments, void 0, function* (req, res, data, textMessage = '', status = 200) {
             const respMessage = languages_1.languages.getText(req.headers['x-language'], textMessage); // req.get('Accept-Language')
             const result = {};
             result.status = status;
@@ -80,8 +80,8 @@ class APIResponse {
      * @param  {any} err
      * @param  {string} defaultMessage
      */
-    error(req, res, err, defaultMessage = '', status = 400) {
-        return __awaiter(this, void 0, void 0, function* () {
+    error(req_1, res_1, err_1) {
+        return __awaiter(this, arguments, void 0, function* (req, res, err, defaultMessage = '', status = 400) {
             let result;
             let respMessage;
             let error;

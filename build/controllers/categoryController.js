@@ -94,7 +94,7 @@ class CategoryController {
                 return response_1.response.error(req, res, error, "some-thing-went-wrong");
             }
         });
-        this.deleteCategory = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.removeCategory = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const payload = req.body.attributes;
                 const categoryData = {

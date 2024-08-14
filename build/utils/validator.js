@@ -51,7 +51,7 @@ class ValidatorUtil {
          */
         this.signup = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log("eejj", req.body);
+                console.log("dgedh677");
                 if (!req.body || !req.body.attributes || Object.keys(req.body).length === 0) {
                     return response_1.response.error(req, res, {}, "INVALID-REQUEST");
                 }
@@ -63,7 +63,7 @@ class ValidatorUtil {
                     lastname: Joi.string().required(),
                     // userName: Joi.string().alphanum().min(3).max(30).required(),
                     email: Joi.string().email().required().label("Email"),
-                    password: Joi.string().required(),
+                    password: Joi.string().required(), // Joi.string().pattern(new RegExp("^[a-zA-Z0-9@]{3,30}$")),
                     // confirmPassword: Joi.ref("password"),
                     // age: Joi.number().required().min(0).max(100),
                     // DOB: Joi.date().greater(new Date("1940-01-01")).required(),
@@ -167,14 +167,13 @@ class ValidatorUtil {
                     transaction_id: Joi.string().required(),
                     totalAmount: Joi.number().required(),
                     address: Joi.string().required(),
-                    userId: Joi.string().required(),
                     status: Joi.string().optional()
                 });
                 // address: {
                 //     addressLine: Joi.string().max(50).required(),
                 //     state: Joi.string().max(15).required(),
                 //     country: Joi.string().max(20).required(),
-                //     zipCode: Joi.string().max(7).required(),
+                //     pinCode: Joi.string().max(7).required(),
                 //   },
                 const { error } = schema.validate(payload);
                 if (error === null || error === undefined) {
@@ -237,6 +236,7 @@ class ValidatorUtil {
                 const payload = req.body.attributes;
                 const itemSchema = Joi.object().keys({
                     productId: Joi.string().required(),
+                    imageUrl: Joi.string().required(),
                     name: Joi.string().required(),
                     quantity: Joi.number().required(),
                     price: Joi.number().required(),

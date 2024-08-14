@@ -39,7 +39,7 @@ class CategoryService extends index_1.Index {
             const statusData = {
                 order_id: orderResult.order_unique_id,
                 booking_date: orderResult.created_date_time,
-                status_code: statusCode,
+                status_code: statusCode, // Ex: 40
                 status_name: statusName, // Ex: Booked
                 // created_at: moment().format()
             };

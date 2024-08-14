@@ -74,7 +74,17 @@ const productSchema = new mongoose.Schema({
     //     type:Number,
     //     default: 0
     // },
-    status: { type: Number, default: 1 },
+    // category: {
+    //     type: String,
+    //     required: [true, "Please enter product category"]
+    // },
+    // stock: {
+    //     type: Number,
+    //     required: [true, "Please enter product stock"],
+    //     maxlength: [4, "Stock cannot exceed limit"],
+    //     default: 1
+    // },
+    status: { type: Number, default: 1 }, // 1- Active, 2-Inactive, 3 -Cancelled
     created_date_time: { type: Date, default: Date.now },
     created_by: { type: String },
     modified_date_time: { type: Date, default: Date.now },

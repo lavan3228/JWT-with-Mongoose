@@ -70,7 +70,7 @@ class ProductController {
                     return response_1.response.error(req, res, {}, "provide product id");
                 }
                 const updateStatusAsInactive = {
-                    status: enumValues_1.productStatus['INACTIVE'],
+                    status: enumValues_1.productStatus['INACTIVE'], // In active
                     modified_date_time: (0, moment_1.default)().format(),
                     modified_by: req.user_id
                 };
@@ -144,7 +144,7 @@ class ProductController {
                 }
                 const productId = payload;
                 const productDelete = {
-                    status: enumValues_1.productStatus['INACTIVE'],
+                    status: enumValues_1.productStatus['INACTIVE'], // In active
                     modified_date_time: (0, moment_1.default)().format(),
                     modified_by: req.user_id
                 };

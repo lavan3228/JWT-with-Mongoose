@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.orderService = void 0;
 const order_1 = require("../models/order");
-const user_1 = require("../models/user");
 const index_1 = require("./index");
 class OrderService extends index_1.Index {
     constructor() {
@@ -29,7 +28,7 @@ class OrderService extends index_1.Index {
             return result;
         });
         this.find = (condition) => __awaiter(this, void 0, void 0, function* () {
-            return yield this.findAll(user_1.userModel, condition);
+            return yield this.findAll(order_1.orderModel, condition);
         });
         this.save = (record) => __awaiter(this, void 0, void 0, function* () {
             return yield this.create(order_1.orderModel, record);
@@ -52,7 +51,7 @@ class OrderService extends index_1.Index {
             const statusData = {
                 order_id: orderResult.order_unique_id,
                 booking_date: orderResult.created_date_time,
-                status_code: statusCode,
+                status_code: statusCode, // Ex: 40
                 status_name: statusName, // Ex: Booked
                 // created_at: moment().format()
             };

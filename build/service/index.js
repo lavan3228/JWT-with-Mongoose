@@ -70,7 +70,7 @@ class Index {
          * @param  {} dataModel
          * @param  {} condition
          */
-        this.findOnePopulateWithOptions = (dataModel, condition, projection = {}, options = {}, populateObj) => __awaiter(this, void 0, void 0, function* () {
+        this.findOnePopulateWithOptions = (dataModel_1, condition_1, ...args_1) => __awaiter(this, [dataModel_1, condition_1, ...args_1], void 0, function* (dataModel, condition, projection = {}, options = {}, populateObj) {
             const data = yield dataModel.findOne(condition, projection, options).populate(populateObj);
             return data;
         });
@@ -79,7 +79,7 @@ class Index {
          * @param  {} dataModel
          * @param  {} condition
          */
-        this.findAllPopulate = (dataModel, condition, projection = {}, options = {}, populateModel) => __awaiter(this, void 0, void 0, function* () {
+        this.findAllPopulate = (dataModel_1, condition_1, ...args_1) => __awaiter(this, [dataModel_1, condition_1, ...args_1], void 0, function* (dataModel, condition, projection = {}, options = {}, populateModel) {
             const data = yield dataModel.find(condition, projection, options).populate(populateModel);
             return data;
         });
@@ -92,7 +92,7 @@ class Index {
          * @param  {} dataModel
          * @param  {} condition
          */
-        this.findWithPopulate = (dataModel, condition, projection, options = {}, populateObj) => __awaiter(this, void 0, void 0, function* () {
+        this.findWithPopulate = (dataModel_1, condition_1, projection_1, ...args_1) => __awaiter(this, [dataModel_1, condition_1, projection_1, ...args_1], void 0, function* (dataModel, condition, projection, options = {}, populateObj) {
             return new Promise((resolve, reject) => {
                 return dataModel.find(condition, projection, options).populate(populateObj)
                     .then((result) => {
@@ -109,7 +109,7 @@ class Index {
          * @param  {} dataModel
          * @param  {} condition
          */
-        this.multiPopulate = (dataModel, condition, projection = {}, options, populateObj1, populateObj2, populateObj3) => __awaiter(this, void 0, void 0, function* () {
+        this.multiPopulate = (dataModel_1, condition_1, ...args_1) => __awaiter(this, [dataModel_1, condition_1, ...args_1], void 0, function* (dataModel, condition, projection = {}, options, populateObj1, populateObj2, populateObj3) {
             return new Promise((resolve, reject) => {
                 return dataModel.find(condition, projection, options).populate(populateObj1).populate(populateObj2).populate(populateObj3)
                     .then((result) => {
@@ -124,7 +124,7 @@ class Index {
         /**
          * Find with two populate
          */
-        this.findWithTwoPopulate = (dataModel, condition, projection = {}, options, populateObj1, populateObj2) => __awaiter(this, void 0, void 0, function* () {
+        this.findWithTwoPopulate = (dataModel_1, condition_1, ...args_1) => __awaiter(this, [dataModel_1, condition_1, ...args_1], void 0, function* (dataModel, condition, projection = {}, options, populateObj1, populateObj2) {
             return new Promise((resolve, reject) => {
                 return dataModel.find(condition, projection, options).populate(populateObj1).populate(populateObj2)
                     .then((result) => {

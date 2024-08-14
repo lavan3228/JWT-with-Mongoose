@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const multer = require('multer');
 const fs = require('fs');
+// import * as AWS from 'aws-sdk';
 // const app = express();
 const upload = multer({ dest: 'uploads/' });
 const express_1 = __importDefault(require("express"));
@@ -38,6 +39,32 @@ app.use((0, cors_1.default)({ origin: "*" }));
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
+const awsRegion = process.env.BUCKET_REGION_NAME;
+// AWS.config.getCredentials((err) => {
+//   if (err) {
+//       console.log('Error in fetching credentials', err);
+//   } else {
+//       AWS.config.credentials;
+//   }
+// });
+// AWS.config.update({ region: awsRegion });
+// const s3 = new AWS.S3({});
+// AWS.config.getCredentials(function (err) {
+//   if (err) {
+//       log.error('Invoice - Error in fetching credentials', err)
+//   }
+//   else {
+//       const awsCredentials: any = AWS.config.credentials;
+//       awsAccessKey = awsCredentials.accessKeyId;
+//       awsSecretKey = awsCredentials.secretAccessKey;
+//   }
+// });
+// const config = {
+//   provider: 'amazon',
+//   keyId: awsAccessKey,
+//   key: awsSecretKey,
+//   region: awsRegion
+// }
 // Importing Routes
 app.use("/api", new endpoints_1.default().configureRoutes());
 // Option to add, edit, view and delete all products in the store.
@@ -50,3 +77,11 @@ app.use("/api", new endpoints_1.default().configureRoutes());
 // https://crazymonk.in/unisex-t-shirts/#
 // https://dev.to/shubham1710/build-an-e-commerce-website-with-mern-stack-part-2-designing-the-models-38o8
 // https://github.com/lavan3228/JWT-with-Mongoose/blob/main/src/routes/endpoints.ts
+// const express = require('express');
+// const connectDB = require('./config/db');
+// const app = express();
+// // Connect Database
+// connectDB();
+// app.get('/', (req, res) => res.send('Hello world!'));
+// const port = process.env.PORT || 8082;
+// app.listen(port, () => console.log(`Server running on port ${port}`));

@@ -1,21 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "rootDir": "./src",
+    "target": "ES6",       // Sets ECMAScript target version for output JavaScript to ES2016.
+    "module": "commonjs",  // Use CommonJS module system for module loading compatibility.
+    "rootDir": "./src",    // Source files located in ./src directory for compilation.
+    "outDir": "./build",   // Compiled JavaScript output to ./build directory.
+    "esModuleInterop": true,  // Enables compatibility with ES6 module imports.
+    "forceConsistentCasingInFileNames": true,  // Ensures case sensitivity in file names.
+    // "strict": true,      // Enables all strict type-checking options.
+    "skipLibCheck": true,   // Skip type checking of declaration files (`.d.ts`).
     "resolveJsonModule": true, /* in case you are importing JSON files */
-    "outDir": "./build",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    // "strict": true,
     // "noImplicitAny": true,
-    "skipLibCheck": true,
     "allowJs": true,
+    "moduleResolution": "node",
   },
-  "include": [
-    "src/**/*.ts"
-, "src/helper/mailHelper.js"  ],
-  "exclude": [
-    "./node_modules"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
 }
